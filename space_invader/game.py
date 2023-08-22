@@ -36,6 +36,7 @@ FONTE_GAME_OVER = pygame.font.Font("freesansbold.ttf", 64)
 
 def texto_fim_do_jogo():
     fim_do_jogo = FONTE_GAME_OVER.render("FIM DO JOGO", True, (255, 255, 255))
+
     TELA.blit(fim_do_jogo, (200, 250))
 
 # vitória do game
@@ -113,8 +114,36 @@ alien_especial_invocado = "no"
 
 # O programa
 executando = True
+tela_inicio = True
+tela_replay = False
+
+while tela_inicio:
+    TELA.fill((0, 0, 0))
+    TELA.blit(FUNDO, (0, 0))
+    texto_inicio = FONTE.render("Pressione CAPS LOCK para começar", True, (255, 255, 255))
+    TELA.blit(texto_inicio, (110, 275))
+    pygame.display.update()
+
+    for evento in pygame.event.get():
+        if evento.type == pygame.KEYDOWN and evento.key == pygame.K_CAPSLOCK:
+            tela_inicio = False
 
 while executando:
+
+    while tela_replay:
+        TELA.fill((0, 0, 0))
+        TELA.blit(FUNDO, (0, 0))
+        texto_replay = FONTE.render("Você Perdeu. Tente novamente em CAPS LOCK", True, (255, 255, 255))
+        TELA.blit(texto_replay, (10, 275))
+        alien_especial_vidas = 3
+        valor_pontuacao = 0
+        num_alienigenas = 6
+        FPS = 120
+        pygame.display.update()
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.KEYDOWN and evento.key == pygame.K_CAPSLOCK:
+                tela_replay = False
 
     # Relógio
     CLOCK.tick(FPS)
@@ -134,6 +163,8 @@ while executando:
     if valor_pontuacao >= 2:
         alien_especial_invocado = "yes"
         num_alienigenas = 0  # Remover os inimigos normais
+    else:
+        alien_especial_invocado = "no"
 
 
     # invocar BOSS:
@@ -142,9 +173,8 @@ while executando:
             alien_especial_X += alien_especial_X_change
 
             if alien_especial_Y > 430: # jm: verifica se o BOSS ja atingiu a altura max.
-                # jm: joga os inimigos pra fora do mapa já que o game acabou.
-                alien_especial_Y = 9999
-                texto_fim_do_jogo()
+                alien_especial_Y = 0
+                tela_replay = True
             
             if alien_especial_X > 736:
                 alien_especial_X_change *= -1
@@ -165,12 +195,11 @@ while executando:
 
                 if alien_especial_vidas == 0:
                     alien_especial_dead = True
-                    # chefe_final_vivo = False
+                    chefe_final_vivo = False
                     valor_pontuacao += 5  # Ajuste a pontuação conforme desejado
                     # Defina a posição fora da tela para remover o alienígena especial
                     alien_especial_X = -100
                     alien_especial_Y = -100
-                    texto_fim_do_jogo()
             alienigena(alien_especial_X, alien_especial_Y)
 
     if alien_especial_dead:
@@ -221,11 +250,12 @@ while executando:
                         alteracao_alienigenaY.append(40)
                         abaixar_alienigena.append(False)
                     FPS = 180
+                elif valor_pontuacao == 0:
+                    FPS = 120
 
             alienigena(alienigenaX[i], alienigenaY[i])
 
         
-
     # Jogador
     if evento.type == pygame.KEYDOWN:
         if evento.key == pygame.K_LEFT:
