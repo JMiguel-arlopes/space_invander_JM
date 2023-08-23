@@ -13,7 +13,7 @@ CLOCK = pygame.time.Clock()
 TELA = pygame.display.set_mode((800, 600))
 
 # FUNDO
-FUNDO = pygame.image.load(os.path.join("assets", "background.png"))
+FUNDO = pygame.image.load(os.path.join("assets", "bg_3.jpg"))
 
 # Título e Ícone
 pygame.display.set_caption("Invasores do Espaço")
@@ -31,14 +31,6 @@ def mostrar_pontuacao(x, y):
     pontuacao = FONTE.render("Pontuação: " + str(valor_pontuacao), True, (255, 255, 255))
     TELA.blit(pontuacao, (x, y))
 
-# Fim do jogo
-FONTE_GAME_OVER = pygame.font.Font("freesansbold.ttf", 64)
-
-def texto_fim_do_jogo():
-    fim_do_jogo = FONTE_GAME_OVER.render("FIM DO JOGO", True, (255, 255, 255))
-
-    TELA.blit(fim_do_jogo, (200, 250))
-
 # vitória do game
 FONTE_VICTORY = pygame.font.Font("freesansbold.ttf", 64)
 
@@ -47,7 +39,7 @@ def text_victory():
     TELA.blit(victory, (255, 250))
 
 # Jogador
-imagem_jogador = pygame.image.load(os.path.join("assets", "spaceship.png"))
+imagem_jogador = pygame.image.load(os.path.join("assets", "nave.png"))
 jogadorX = 370
 jogadorY = 480
 alteracao_jogadorX = 0
@@ -67,7 +59,7 @@ num_alienigenas = 6
 
 
 for i in range(num_alienigenas):
-    imagem_alienigena.append(pygame.image.load("assets\\alien.png"))
+    imagem_alienigena.append(pygame.image.load("assets\\alien_2.png"))
     alienigenaX.append(randint(0, 735))
     alienigenaY.append(randint(50, 150))
     alteracao_alienigenaX.append(1)
@@ -76,6 +68,9 @@ for i in range(num_alienigenas):
 
 def alienigena(x, y):
     TELA.blit(imagem_alienigena[i], (x, y))
+
+def alienigena_boss(x, y):
+    TELA.blit(alien_especial_img, (x, y))
 
 # Tiro
 imagem_tiro = pygame.image.load("assets\\bullet.png")
@@ -102,13 +97,13 @@ def colisao(alienigenaX, alienigenaY, tiroX, tiroY):
 
 
 # BOSS:
-alien_especial_img = pygame.image.load("assets\\alien.png")
+alien_especial_img = pygame.image.load("assets\\boss.png")
 alien_especial_X = randint(0, 735)
 alien_especial_Y = randint(50, 150)
 alien_especial_X_change = 3
-alien_especial_Y_change = 50
+alien_especial_Y_change = 40
 alien_especial_dead = False
-alien_especial_vidas = 3  # Número de vidas do alienígena especial
+alien_especial_vidas = 10
 chefe_final_vivo = True
 alien_especial_invocado = "no"
 
@@ -134,8 +129,8 @@ while executando:
         TELA.fill((0, 0, 0))
         TELA.blit(FUNDO, (0, 0))
         texto_replay = FONTE.render("Você Perdeu. Tente novamente em CAPS LOCK", True, (255, 255, 255))
-        TELA.blit(texto_replay, (10, 275))
-        alien_especial_vidas = 3
+        TELA.blit(texto_replay, (15, 275))
+        alien_especial_vidas = 10
         valor_pontuacao = 0
         num_alienigenas = 6
         FPS = 120
@@ -160,7 +155,7 @@ while executando:
             executando = False
 
     # invocando BOSS
-    if valor_pontuacao >= 2:
+    if valor_pontuacao >= 50:
         alien_especial_invocado = "yes"
         num_alienigenas = 0  # Remover os inimigos normais
     else:
@@ -191,16 +186,16 @@ while executando:
                 tiroY = 480
                 estado_tiro = "pronto"
                 alien_especial_vidas -= 1
-                alien_especial_Y -= 30
+                alien_especial_Y -= 50
 
                 if alien_especial_vidas == 0:
                     alien_especial_dead = True
                     chefe_final_vivo = False
-                    valor_pontuacao += 5  # Ajuste a pontuação conforme desejado
+                    valor_pontuacao += 50  # Ajuste a pontuação conforme desejado
                     # Defina a posição fora da tela para remover o alienígena especial
                     alien_especial_X = -100
                     alien_especial_Y = -100
-            alienigena(alien_especial_X, alien_especial_Y)
+            alienigena_boss(alien_especial_X, alien_especial_Y)
 
     if alien_especial_dead:
         text_victory()
@@ -240,14 +235,14 @@ while executando:
 
 
                 # ONDE JM MODIFICOU: 
-                if valor_pontuacao == 1:
-                    num_alienigenas = 15  # Aumentar o número de inimigos
+                if valor_pontuacao == 25:
+                    num_alienigenas = 12  # Aumentar o número de inimigos
                     for j in range(num_alienigenas):
-                        imagem_alienigena.append(pygame.image.load("assets\\alien.png"))
+                        imagem_alienigena.append(pygame.image.load("assets\\alien_2.png"))
                         alienigenaX.append(randint(0, 735))
-                        alienigenaY.append(randint(50, 150))
+                        alienigenaY.append(randint(100, 150))
                         alteracao_alienigenaX.append(1)
-                        alteracao_alienigenaY.append(40)
+                        alteracao_alienigenaY.append(50)
                         abaixar_alienigena.append(False)
                     FPS = 180
                 elif valor_pontuacao == 0:
